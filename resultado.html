@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liga de Natación del Huila - Resultados</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="asset/css/resultado.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="header-left d-flex align-items-center">
+        <a href="#" class="brand-logo">
+          <img src="asset/img/imglogo/logo.png" alt="Logo">
+        </a>
+        <span class="brand-text">Liga de Natación del Huila</span>
+      </div>
+      <div class="hamburger-menu" id="hamburger-menu" aria-label="Menú de navegación" aria-controls="nav-menu" aria-expanded="false" role="button">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav class="header-nav" id="nav-menu" aria-label="Menú de navegación">
+        <ul class="nav-list d-flex">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="calendario.html">Calendario</a></li>
+          <li><a href="resultado.html">Resultados</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="productos.html">Productos</a></li>
+        </ul>
+      </nav>
+      <div class="header-social d-flex">
+        <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
+        <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+        <a href="https://wa.me/573227316706" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+      </div>
+      <div class="login-icon">
+        <a href="login.html" title="Iniciar sesión"><i class="fas fa-user fa-lg"></i></a>
+      </div>
+    </div>
+  </header>
+  <section>
+    <br>
+  </section>
+  <section class="resultados-hero py-4 mb-4">
+    <div class="container">
+      <div class="resultados-hero-content text-center">
+        <h1 class="display-4 font-weight-bold mb-2">Resultados de los Torneos</h1>
+        <p class="lead text-muted">Consulta los resultados de los torneos y categorías disponibles</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-5 mb-2">
+        <div class="form-group resultados-form-group">
+          <label for="torneoSelect" class="font-weight-bold"><i class="fas fa-trophy mr-1"></i>Seleccionar Torneo:</label>
+          <select id="torneoSelect" class="form-control custom-select">
+            <option value="">Seleccione un torneo</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-5 mb-2">
+        <div class="form-group resultados-form-group">
+          <label for="categoriaSelect" class="font-weight-bold"><i class="fas fa-users mr-1"></i>Seleccionar Categoría:</label>
+          <select id="categoriaSelect" class="form-control custom-select" disabled>
+            <option value="">Seleccione una categoría</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive resultados-table-card">
+      <table class="table table-hover table-striped mb-0">
+        <thead class="thead-dark">
+          <tr>
+            <th>Foto</th>
+            <th>Nadador</th>
+            <th>Club</th>
+            <th>Tiempo</th>
+            <th>Puesto</th>
+          </tr>
+        </thead>
+        <tbody id="inscripcionesTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+
+  <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const torneoSelect = document.getElementById('torneoSelect');
+            const categoriaSelect = document.getElementById('categoriaSelect');
+            const tableBody = document.getElementById('inscripcionesTableBody');
+
+            fetch('obtener_torneos.php')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(torneo => {
+                        const option = document.createElement('option');
+                        option.value = torneo.id;
+                        option.textContent = torneo.nombre;
+                        torneoSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al cargar los torneos:', error));
+
+            torneoSelect.addEventListener('change', function () {
+                const torneoId = torneoSelect.value;
+
+                categoriaSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+                categoriaSelect.disabled = true;
+                tableBody.innerHTML = '';
+
+                if (!torneoId) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Seleccione un torneo para ver las inscripciones.</td></tr>';
+                    return;
+                }
+
+                fetch(`obtener_categorias.php?torneo_id=${torneoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            categoriaSelect.disabled = false;
+                            data.forEach(categoria => {
+                                const option = document.createElement('option');
+                                option.value = categoria;
+                                option.textContent = categoria;
+                                categoriaSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error al cargar las categorías:', error));
+            });
+
+            categoriaSelect.addEventListener('change', function () {
+                const torneoId = torneoSelect.value;
+                const categoria = categoriaSelect.value;
+
+                tableBody.innerHTML = '';
+
+                if (!categoria) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Seleccione una categoría para ver las inscripciones.</td></tr>';
+                    return;
+                }
+
+                fetch(`obtener_inscripciones.php?torneo_id=${torneoId}&categoria=${encodeURIComponent(categoria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay inscripciones para esta categoría.</td></tr>';
+                            return;
+                        }
+
+                        data.forEach(inscripcion => {
+                            const row = document.createElement('tr');
+                            row.dataset.inscripcionId = inscripcion.inscripcion_id;
+
+                            let tiempoTexto = '-';
+                            if (
+                                inscripcion.minutos !== undefined && inscripcion.minutos !== '' &&
+                                inscripcion.segundos !== undefined && inscripcion.segundos !== '' &&
+                                inscripcion.centesimas !== undefined && inscripcion.centesimas !== ''
+                            ) {
+                                const mm = String(inscripcion.minutos).padStart(2, '0');
+                                const ss = String(inscripcion.segundos).padStart(2, '0');
+                                const cc = String(inscripcion.centesimas).padStart(2, '0');
+                                tiempoTexto = `${mm}:${ss}.${cc}`;
+                                const minutos = parseInt(inscripcion.minutos, 10) || 0;
+                                const segundos = parseInt(inscripcion.segundos, 10) || 0;
+                                const centesimas = parseInt(inscripcion.centesimas, 10) || 0;
+                                const tiempoTotal = minutos * 6000 + segundos * 100 + centesimas;
+                                row.dataset.tiempoTotal = tiempoTotal;
+                            }
+
+                            row.innerHTML = `
+                                <td><img src="${inscripcion.foto}" alt="Foto de ${inscripcion.usuario}" class="img-thumbnail" style="width: 50px; height: 50px;"></td>
+                                <td>${inscripcion.usuario}</td>
+                                <td>${inscripcion.club}</td>
+                                <td>
+                                    <div class="tiempo-container">
+                                        <span>${tiempoTexto}</span>
+                                    </div>
+                                </td>
+                                <td class="puesto">-</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                        actualizarPuestos();
+                    })
+                    .catch(error => console.error('Error al cargar las inscripciones:', error));
+            });
+
+            function actualizarPuestos() {
+                const filas = Array.from(tableBody.querySelectorAll('tr'));
+                filas.sort((a, b) => {
+                    const tiempoA = parseInt(a.dataset.tiempoTotal || 'Infinity', 10);
+                    const tiempoB = parseInt(b.dataset.tiempoTotal || 'Infinity', 10);
+                    return tiempoA - tiempoB;
+                });
+
+                filas.forEach((fila, index) => {
+                    const puestoCell = fila.querySelector('.puesto');
+                    if (fila.dataset.tiempoTotal) {
+                        puestoCell.textContent = index + 1; 
+                    } else {
+                        puestoCell.textContent = '-'; 
+                    }
+                    tableBody.appendChild(fila); 
+                });
+            }
+        });
+    </script>
+
+  <footer id="footer">
+    <div class="footer-container">
+      <div class="footer-row">
+
+        <div class="footer-col">
+          <h5>Contacto</h5>
+          <p><strong>Dirección:</strong> Carrera 10 #12-34, Neiva, Huila, Colombia</p>
+          <p><strong>Teléfono:</strong> (57) 8 1234567</p>
+          <p><strong>Correo:</strong> info@liganatacionhuila.com</p>
+          <p><strong>Horarios:</strong> Lunes - Viernes: 8:00 - 17:00</p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Navegación</h5>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="calendario.html#torneos">Torneos</a></li>
+            <li><a href="calendario.html">Calendario</a></li>
+            <li><a href="resultado.html">Resultados</a></li>
+            <li><a href="noticias.html">Noticias</a></li>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="#footer">Contacto</a></li>
+          </ul>
+        </div>
+
+        <h5>Síguenos</h5>
+          <ul class="social-links">
+            <li>
+              <a href="https://www.facebook.com/" target="_blank">
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.instagram.com/" target="_blank">
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://wa.me/573227316706" target="_blank">
+                <i class="fab fa-whatsapp fa-2x"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <hr>
+        <p>© 2025 Liga de Natación del Huila. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById('hamburger-menu').addEventListener('click', function() {
+      var navMenu = document.getElementById('nav-menu');
+      var isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      navMenu.classList.toggle('active');
+      this.classList.toggle('active');
+    });
+
+    function handleResize() {
+      var headerSocial = document.querySelector('.header-social');
+      if (window.innerWidth <= 768) {
+        headerSocial.style.display = 'none';
+      } else {
+        headerSocial.style.display = 'flex';
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('load', handleResize);
+  </script>
+</body>
+</html>

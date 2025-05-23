@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <title>Calendario</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/calendario.css">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="header-left d-flex align-items-center">
+                <a href="#" class="brand-logo">
+                    <img src="./asset/img/imglogo/logo.png" alt="Logo">
+                </a>
+                <span class="brand-text">Liga de Natación del Huila</span>
+            </div>
+            <div class="hamburger-menu" id="hamburger-menu" aria-label="Menú de navegación" aria-controls="nav-menu" aria-expanded="false" role="button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="header-nav" id="nav-menu" aria-label="Menú de navegación">
+                <ul class="nav-list d-flex">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="calendario.html">Calendario</a></li>
+                    <li><a href="resultado.html">Resultados</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                </ul>
+            </nav>
+            <div class="header-social d-flex">
+                <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
+                <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+                <a href="https://wa.me/573001234567" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+            </div>
+            <div class="login-icon">
+                <a href="login.html" title="Iniciar sesión"><i class="fas fa-user fa-lg"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="calendario" class="py-5">
+            <div class="container">
+                <h2 class="section-title text-center mb-4">Calendario de Eventos</h2>
+                <div id='calendar'></div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="footer-container">
+            <div class="footer-row">
+                <div class="footer-col">
+                    <h5>Contacto</h5>
+                    <p><strong>Dirección:</strong> Carrera 10 #12-34, Neiva, Huila, Colombia</p>
+                    <p><strong>Teléfono:</strong> (57) 8 1234567</p>
+                    <p><strong>Correo:</strong> info@liganatacionhuila.com</p>
+                    <p><strong>Horarios:</strong> Lunes - Viernes: 8:00 - 17:00</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Navegación</h5>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="calendario.html#torneos">Torneos</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li><a href="resultado.html">Resultados</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                        <li><a href="productos.html">Productos</a></li>
+                        <li><a href="#footer">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Síguenos</h5>
+                    <ul class="social-links">
+                        <li>
+                            <a href="https://www.facebook.com/" target="_blank">
+                                <i class="fab fa-facebook fa-2x"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/" target="_blank">
+                                <i class="fab fa-instagram fa-2x"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://wa.me/573001234567" target="_blank">
+                                <i class="fab fa-whatsapp fa-2x"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <hr>
+                <p>© 2025 Liga de Natación del Huila. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                events: 'torneos.php', // Obtener eventos desde torneos.php
+                eventClick: function(info) {
+                    // Verificar si el usuario está logueado
+                    fetch('verificar_sesion.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.logged_in) {
+                                // Redirigir al detalle del torneo si está logueado
+                                window.location.href = info.event.extendedProps.url;
+                            } else {
+                                // Mostrar mensaje si no está logueado
+                                alert('Primero necesitas iniciar sesión para acceder al torneo.');
+                            }
+                        })
+                        .catch(error => console.error('Error al verificar la sesión:', error));
+                },
+                eventContent: function(arg) {
+                    let icon = arg.event.extendedProps.icon;
+                    let title = arg.event.title;
+                    let formattedTime = new Date(arg.event.start).toLocaleTimeString('es-ES', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    }).replace('.', '').replace(':00', '');
+                    
+                    // Mostrar detalles solo en el primer día del evento
+                    if (arg.isStart) {
+                        return { html: `<div class="fc-event-content"><img src="${icon}" alt="icon" style="width: 20px; height: 20px; margin-right: 5px;"><small style="margin-top: 5px; display: inline-block; color: #000;">${formattedTime}</small><b style="display: inline-block;">${title}</b></div>` };
+                    } else {
+                        return { html: `<div class="fc-event-content"><b style="display: inline-block;">${title}</b></div>` };
+                    }
+                }
+            });
+            calendar.render();
+        });
+
+        // Control del menú hamburguesa
+        document.getElementById('hamburger-menu').addEventListener('click', function() {
+            var navMenu = document.getElementById('nav-menu');
+            var isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active'); // Añadir la clase 'active' para el efecto de rotación
+        });
+
+        function handleResize() {
+            var headerSocial = document.querySelector('.header-social');
+            if (window.innerWidth <= 768) {
+                headerSocial.style.display = 'none';
+            } else {
+                headerSocial.style.display = 'flex';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('load', handleResize);
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Clubes - Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/admin.css">
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('verificar_admin.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.admin_logged_in) {
+                        window.location.href = 'admin_login.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'admin_login.html';
+                });
+        });
+    </script>
+    <div class="admin-sidebar fixed-sidebar">
+        <h2><i class="fas fa-user-shield"></i> Panel de Administración</h2>
+        <ul>
+            <li><a href="registrar_clubes.html" class="active"><i class="fas fa-swimmer"></i> Registrar Clubes</a></li>
+            <li><a href="registrar_participantes.html"><i class="fas fa-users"></i> Registrar Participantes</a></li>
+            <li><a href="inscripciones.html"><i class="fas fa-upload"></i> Subir Resultados</a></li>
+            <li><a href="prueba.html"><i class="fas fa-calendar-check"></i> Gestión de Torneos</a></li>
+        </ul>
+        <div style="margin-top:30px; text-align:center;">
+            <a href="logout_admin.php" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+        </div>
+    </div>
+
+    <div class="admin-content">
+        <header class="admin-header">
+            <h1>Registrar Club</h1>
+        </header>
+        <main class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8 col-sm-12">
+                    <div class="card p-4">
+                        <form action="procesar_registro_club.php" method="POST">
+                            <div class="form-group">
+                                <label for="club-name">Nombre del Club</label>
+                                <input type="text" id="club-name" name="nombre_club" class="form-control" placeholder="Ingresa el nombre del club" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="club-address">Dirección</label>
+                                <input type="text" id="club-address" name="direccion" class="form-control" placeholder="Ingresa la dirección del club" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="club-phone">Teléfono</label>
+                                <input type="text" id="club-phone" name="telefono" class="form-control" placeholder="Ingresa el teléfono del club" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="club-email">Correo Electrónico</label>
+                                <input type="email" id="club-email" name="correo" class="form-control" placeholder="Ingresa el correo del club" required>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">Registrar Club</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

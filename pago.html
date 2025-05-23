@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Pago</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="asset/css/pago.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="productos.html" class="brand-logo">
+        <img src="asset/img/imglogo/logo.png" alt="Logo" height="50">
+      </a>
+      <h1 class="text-center">Página de Pago</h1>
+    </div>
+  </header>
+
+  <main class="container py-5">
+    <h2 class="text-center mb-4">Resumen de Compra</h2>
+    <div class="carrito-resumen">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-carrito">
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-right font-weight-bold">Costo de Envío:</td>
+            <td id="costo-envio">$0</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-right font-weight-bold">Total:</td>
+            <td id="total-carrito">$0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <h2 class="text-center mt-5 mb-4">Información de Pago</h2>
+    <form id="form-pago">
+      <div class="form-group">
+        <label for="nombre">Nombre Completo</label>
+        <input type="text" id="nombre" class="form-control" placeholder="Ingresa tu nombre completo" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Correo Electrónico</label>
+        <input type="email" id="email" class="form-control" placeholder="Ingresa tu correo electrónico" required>
+      </div>
+      <div class="form-group" id="direccion-container" style="display: none;">
+        <label for="direccion">Dirección</label>
+        <textarea id="direccion" class="form-control" placeholder="Configura tu dirección haciendo clic en el botón de abajo" readonly></textarea>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <button id="abrir-direccion" type="button" class="btn btn-primary">Configurar Dirección</button>
+        <a href="productos.html" class="btn btn-secondary">Seguir Comprando</a>
+      </div>
+      <div class="form-group">
+        <label for="metodo-pago">Método de Pago</label>
+        <select id="metodo-pago" class="form-control" required>
+          <option value="recoger">Recoger en sede principal</option>
+          <option value="contra-entrega">Contra entrega</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success btn-block">Confirmar Compra</button>
+    </form>
+  </main>
+
+  <div id="direccion-lateral" class="direccion-lateral">
+    <div class="direccion-header">
+      <h2>Opciones de entrega</h2>
+      <button id="direccion-cerrar" class="direccion-cerrar">&times;</button>
+    </div>
+    <div class="direccion-body">
+      <label for="departamento">*Departamento</label>
+      <select id="departamento">
+        <option value="Huila">Huila</option>
+      </select>
+      <label for="municipio">*Municipio o ciudad capital</label>
+      <select id="municipio">
+        <option value="Neiva">Neiva</option>
+      </select>
+      <label for="tipo-direccion">*Tipo de dirección</label>
+      <select id="tipo-direccion">
+        <option value="Seleccionar">Seleccionar</option>
+        <option value="Autopista">Autopista</option>
+        <option value="Av. Carrera">Av. Carrera</option>
+        <option value="Av. Diagonal">Av. Diagonal</option>
+        <option value="Av. Transversal">Av. Transversal</option>
+        <option value="Avenida Calle">Avenida Calle</option>
+        <option value="Calle">Calle</option>
+        <option value="Carrera">Carrera</option>
+        <option value="Circular">Circular</option>
+        <option value="Circunvalar">Circunvalar</option>
+        <option value="Diagonal">Diagonal</option>
+        <option value="Manzana">Manzana</option>
+        <option value="Otro">Otro</option>
+        <option value="Transversal">Transversal</option>
+        <option value="Vía">Vía</option>
+      </select>
+      <label for="calle">*Calle</label>
+      <input id="calle" type="text" placeholder="Ej: 18">
+      <label for="numero">*Número</label>
+      <div style="display: flex; gap: 10px;">
+        <input id="numero1" type="text" placeholder="79A">
+        <input id="numero2" type="text" placeholder="33">
+      </div>
+      <label for="barrio">*Barrio</label>
+      <input id="barrio" type="text" placeholder="Ej: Los Colores">
+      <label for="piso">Piso/Apartamento/Torre/Edificio</label>
+      <input id="piso" type="text" placeholder="Ej: Torre 5 Apto 302">
+      <label for="nombre-recibe">*Nombre de la persona que recibe</label>
+      <input id="nombre-recibe" type="text" placeholder="Ej: Juan David Muñoz Calderón">
+      <button id="guardar-direccion" class="btn-direccion" style="margin-top: 15px;">Guardar dirección</button>
+    </div>
+  </div>
+
+  <footer class="text-center py-4">
+    <p>© 2025 Liga de Natación del Huila. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+      const tablaCarrito = document.getElementById('tabla-carrito');
+      const totalCarrito = document.getElementById('total-carrito');
+      const costoEnvio = document.getElementById('costo-envio');
+      const metodoPago = document.getElementById('metodo-pago');
+      const direccionContainer = document.getElementById('direccion-container');
+      const direccionTextarea = document.getElementById('direccion');
+
+      let total = 0;
+
+      carrito.forEach(producto => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td class="text-center"><img src="${producto.imagen}" alt="${producto.nombre}" style="width: 50px; height: 50px; object-fit: cover;"></td>
+          <td>${producto.nombre}</td>
+          <td>${producto.cantidad}</td>
+          <td>${producto.precioTexto}</td>
+          <td>$${(producto.cantidad * producto.precioNumerico).toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+        `;
+        tablaCarrito.appendChild(fila);
+        total += producto.cantidad * producto.precioNumerico;
+      });
+
+      metodoPago.addEventListener('change', () => {
+        if (metodoPago.value === 'contra-entrega') {
+          costoEnvio.textContent = '$5.000';
+          totalCarrito.textContent = `$${(total + 5000).toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+          direccionContainer.style.display = 'block';
+          direccionTextarea.required = true;
+        } else {
+          costoEnvio.textContent = '$0';
+          totalCarrito.textContent = `$${total.toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+          direccionContainer.style.display = 'none';
+          direccionTextarea.required = false;
+        }
+      });
+
+      totalCarrito.textContent = `$${total.toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+
+      document.getElementById('form-pago').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        const total = parseFloat(document.getElementById('total-carrito').textContent.replace('$', '').replace('.', '').replace(',', '.'));
+
+        fetch('procesar_pedido.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                productos: JSON.stringify(carrito),
+                total: total
+            })
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+            localStorage.removeItem('carrito');
+            window.location.href = 'productos.html';
+        })
+        .catch(error => console.error('Error al procesar el pedido:', error));
+    });
+
+      const direccionLateral = document.getElementById('direccion-lateral');
+      const abrirDireccion = document.getElementById('abrir-direccion');
+      const cerrarDireccion = document.getElementById('direccion-cerrar');
+      const guardarDireccion = document.getElementById('guardar-direccion');
+
+      abrirDireccion.addEventListener('click', () => {
+        direccionLateral.classList.add('visible');
+      });
+
+      cerrarDireccion.addEventListener('click', () => {
+        direccionLateral.classList.remove('visible');
+      });
+
+      guardarDireccion.addEventListener('click', () => {
+        const departamento = document.getElementById('departamento').value;
+        const municipio = document.getElementById('municipio').value;
+        const tipoDireccion = document.getElementById('tipo-direccion').value;
+        const calle = document.getElementById('calle').value;
+        const numero1 = document.getElementById('numero1').value;
+        const numero2 = document.getElementById('numero2').value;
+        const barrio = document.getElementById('barrio').value;
+        const piso = document.getElementById('piso').value;
+        const nombreRecibe = document.getElementById('nombre-recibe').value;
+
+        const direccionCompleta = `
+          Departamento: ${departamento}
+          Municipio: ${municipio}
+          Dirección: ${tipoDireccion} ${calle} #${numero1}-${numero2} ${piso}
+          Barrio: ${barrio}
+          Recibe: ${nombreRecibe}
+        `.trim();
+
+        direccionTextarea.value = direccionCompleta;
+        direccionLateral.classList.remove('visible');
+      });
+    });
+  </script>
+</body>
+</html>

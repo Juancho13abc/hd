@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrador</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/style.css">
+    <style>
+        body { background: #f8f9fa; }
+        .admin-login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            padding: 32px 24px;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="header-left d-flex align-items-center">
+                <a href="index.html" class="brand-logo">
+                    <img src="asset/img/imglogo/logo.png" alt="Logo">
+                </a>
+                <span class="brand-text">Liga de Natación del Huila</span>
+            </div>
+            <div class="hamburger-menu" id="hamburger-menu" aria-label="Menú de navegación" aria-controls="nav-menu" aria-expanded="false" role="button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="header-nav" id="nav-menu" aria-label="Menú de navegación">
+                <ul class="nav-list d-flex">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="calendario.html">Calendario</a></li>
+                    <li><a href="resultado.html">Resultados</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                </ul>
+            </nav>
+            <div class="header-social d-flex">
+                <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
+                <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+                <a href="https://wa.me/573227316706" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+            </div>
+            <div class="login-icon">
+                <a href="login.html" title="Iniciar sesión"><i class="fas fa-user fa-lg"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="admin-login-container">
+        <h2 class="text-center mb-4">Administrador - Iniciar Sesión</h2>
+        <form action="procesar_admin_login.php" method="POST">
+            <div class="form-group">
+                <label for="admin-email">Correo</label>
+                <input type="email" id="admin-email" name="email" class="form-control" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Contraseña</label>
+                <input type="password" id="admin-password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Entrar</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('hamburger-menu').addEventListener('click', function() {
+            var navMenu = document.getElementById('nav-menu');
+            var isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        function handleResize() {
+            var headerSocial = document.querySelector('.header-social');
+            if (window.innerWidth <= 768) {
+                headerSocial.style.display = 'none';
+            } else {
+                headerSocial.style.display = 'flex';
+            }
+        }
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('load', handleResize);
+    </script>
+</body>
+</html>

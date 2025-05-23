@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripciones</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/admin.css">
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('verificar_admin.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.admin_logged_in) {
+                        window.location.href = 'admin_login.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'admin_login.html';
+                });
+        });
+    </script>
+    <div class="admin-sidebar fixed-sidebar">
+        <h2><i class="fas fa-user-shield"></i> Panel de Administración</h2>
+        <ul>
+            <li><a href="registrar_clubes.html"><i class="fas fa-swimmer"></i> Registrar Clubes</a></li>
+            <li><a href="registrar_participantes.html"><i class="fas fa-users"></i> Registrar Participantes</a></li>
+            <li><a href="inscripciones.html" class="active"><i class="fas fa-upload"></i> Subir Resultados</a></li>
+            <li><a href="prueba.html"><i class="fas fa-calendar-check"></i> Gestión de Torneos</a></li>
+        </ul>
+        <div style="margin-top:30px; text-align:center;">
+            <a href="logout_admin.php" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+        </div>
+    </div>
+
+    <div class="admin-content">
+        <header class="admin-header">
+            <h1 class="text-center">Subir resultados de los torneos</h1>
+        </header>
+        <main class="container mt-4">
+            <div class="form-group">
+                <label for="torneoSelect">Seleccionar Torneo:</label>
+                <select id="torneoSelect" class="form-control">
+                    <option value="">Seleccione un torneo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="categoriaSelect">Seleccionar Categoría:</label>
+                <select id="categoriaSelect" class="form-control" disabled>
+                    <option value="">Seleccione una categoría</option>
+                </select>
+            </div>
+
+            <table class="table table-hover table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nadador</th>
+                        <th>Club</th>
+                        <th>Tiempo</th>
+                        <th>Puesto</th>
+                    </tr>
+                </thead>
+                <tbody id="inscripcionesTableBody">
+                    <!-- Los datos se cargarán dinámicamente aquí -->
+                </tbody>
+            </table>
+            <button id="guardarTiemposBtn" class="btn btn-success">Guardar tiempos</button>
+            <div id="mensajeGuardado" class="mt-2"></div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const torneoSelect = document.getElementById('torneoSelect');
+            const categoriaSelect = document.getElementById('categoriaSelect');
+            const tableBody = document.getElementById('inscripcionesTableBody');
+
+            // Cargar torneos en el selector
+            fetch('obtener_torneos.php')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(torneo => {
+                        const option = document.createElement('option');
+                        option.value = torneo.id;
+                        option.textContent = torneo.nombre;
+                        torneoSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al cargar los torneos:', error));
+
+            // Cargar categorías según el torneo seleccionado
+            torneoSelect.addEventListener('change', function () {
+                const torneoId = torneoSelect.value;
+
+                categoriaSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+                categoriaSelect.disabled = true;
+                tableBody.innerHTML = '';
+
+                if (!torneoId) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Seleccione un torneo para ver las inscripciones.</td></tr>';
+                    return;
+                }
+
+                fetch(`obtener_categorias.php?torneo_id=${torneoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            categoriaSelect.disabled = false;
+                            data.forEach(categoria => {
+                                const option = document.createElement('option');
+                                option.value = categoria;
+                                option.textContent = categoria;
+                                categoriaSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error al cargar las categorías:', error));
+            });
+
+            // Cargar inscripciones según la categoría seleccionada
+            categoriaSelect.addEventListener('change', function () {
+                const torneoId = torneoSelect.value;
+                const categoria = categoriaSelect.value;
+
+                tableBody.innerHTML = '';
+
+                if (!categoria) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Seleccione una categoría para ver las inscripciones.</td></tr>';
+                    return;
+                }
+
+                fetch(`obtener_inscripciones.php?torneo_id=${torneoId}&categoria=${encodeURIComponent(categoria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay inscripciones para esta categoría.</td></tr>';
+                            return;
+                        }
+
+                        data.forEach(inscripcion => {
+                            const row = document.createElement('tr');
+                            row.dataset.inscripcionId = inscripcion.inscripcion_id;
+                            row.innerHTML = `
+                                <td><img src="${inscripcion.foto}" alt="Foto de ${inscripcion.usuario}" class="img-thumbnail" style="width: 50px; height: 50px;"></td>
+                                <td>${inscripcion.usuario}</td>
+                                <td>${inscripcion.club}</td>
+                                <td>
+                                    <div class="tiempo-container">
+                                        <input type="number" class="form-control tiempo-minutos" placeholder="MM" min="0" max="59" title="Minutos" value="${inscripcion.minutos !== undefined && inscripcion.minutos !== null ? inscripcion.minutos : ''}">
+                                        <span>:</span>
+                                        <input type="number" class="form-control tiempo-segundos" placeholder="SS" min="0" max="59" title="Segundos" value="${inscripcion.segundos !== undefined && inscripcion.segundos !== null ? inscripcion.segundos : ''}">
+                                        <span>.</span>
+                                        <input type="number" class="form-control tiempo-centesimas" placeholder="CC" min="0" max="99" title="Centésimas" value="${inscripcion.centesimas !== undefined && inscripcion.centesimas !== null ? inscripcion.centesimas : ''}">
+                                    </div>
+                                </td>
+                                <td class="puesto">-</td>
+                            `;
+                            tableBody.appendChild(row);
+
+                            // Si hay tiempo guardado, actualiza el dataset para el cálculo de puestos
+                            if (
+                                inscripcion.minutos !== undefined && inscripcion.minutos !== '' &&
+                                inscripcion.segundos !== undefined && inscripcion.segundos !== '' &&
+                                inscripcion.centesimas !== undefined && inscripcion.centesimas !== ''
+                            ) {
+                                const minutos = parseInt(inscripcion.minutos, 10) || 0;
+                                const segundos = parseInt(inscripcion.segundos, 10) || 0;
+                                const centesimas = parseInt(inscripcion.centesimas, 10) || 0;
+                                const tiempoTotal = minutos * 6000 + segundos * 100 + centesimas;
+                                row.dataset.tiempoTotal = tiempoTotal;
+                            }
+                        });
+                        actualizarPuestos();
+                    })
+                    .catch(error => console.error('Error al cargar las inscripciones:', error));
+            });
+
+            // Guardar cambios en las celdas editables
+            tableBody.addEventListener('input', function (event) {
+                const target = event.target;
+                if (target.classList.contains('editable')) {
+                    const field = target.dataset.field;
+                    const value = target.textContent.trim();
+                    console.log(`Campo editado: ${field}, Nuevo valor: ${value}`);
+                    // Aquí puedes agregar lógica para guardar los cambios en el servidor si es necesario.
+                }
+            });
+
+            // Validar y guardar cambios en los campos de tiempo
+            tableBody.addEventListener('input', function (event) {
+                const target = event.target;
+                if (target.classList.contains('tiempo-minutos') || target.classList.contains('tiempo-segundos') || target.classList.contains('tiempo-centesimas')) {
+                    const row = target.closest('tr');
+                    const minutos = parseInt(row.querySelector('.tiempo-minutos').value || '0', 10);
+                    const segundos = parseInt(row.querySelector('.tiempo-segundos').value || '0', 10);
+                    const centesimas = parseInt(row.querySelector('.tiempo-centesimas').value || '0', 10);
+
+                    // Calcular el tiempo total en centésimas
+                    const tiempoTotal = minutos * 6000 + segundos * 100 + centesimas;
+                    row.dataset.tiempoTotal = tiempoTotal;
+
+                    actualizarPuestos();
+                }
+            });
+
+            // Función para actualizar los puestos basados en los tiempos
+            function actualizarPuestos() {
+                const filas = Array.from(tableBody.querySelectorAll('tr'));
+                filas.sort((a, b) => {
+                    const tiempoA = parseInt(a.dataset.tiempoTotal || 'Infinity', 10);
+                    const tiempoB = parseInt(b.dataset.tiempoTotal || 'Infinity', 10);
+                    return tiempoA - tiempoB;
+                });
+
+                filas.forEach((fila, index) => {
+                    const puestoCell = fila.querySelector('.puesto');
+                    if (fila.dataset.tiempoTotal) {
+                        puestoCell.textContent = index + 1; // Asignar el puesto
+                    } else {
+                        puestoCell.textContent = '-'; // Si no hay tiempo, no asignar puesto
+                    }
+                    tableBody.appendChild(fila); // Reordenar las filas en el DOM
+                });
+            }
+
+            // Guardar tiempos en la base de datos
+            document.getElementById('guardarTiemposBtn').addEventListener('click', function () {
+                const filas = Array.from(tableBody.querySelectorAll('tr'));
+                const datos = [];
+                filas.forEach((fila, idx) => {
+                    const minutos = fila.querySelector('.tiempo-minutos').value;
+                    const segundos = fila.querySelector('.tiempo-segundos').value;
+                    const centesimas = fila.querySelector('.tiempo-centesimas').value;
+                    // Suponiendo que cada fila tiene un atributo data-inscripcion-id
+                    const inscripcionId = fila.dataset.inscripcionId;
+                    if (minutos !== "" && segundos !== "" && centesimas !== "" && inscripcionId) {
+                        datos.push({
+                            inscripcion_id: inscripcionId,
+                            minutos,
+                            segundos,
+                            centesimas
+                        });
+                    }
+                });
+
+                console.log('Datos enviados:', datos); // <-- Agrega esta línea
+
+                if (datos.length === 0) {
+                    document.getElementById('mensajeGuardado').innerHTML = '<div class="alert alert-warning">No hay tiempos para guardar.</div>';
+                    return;
+                }
+
+                fetch('guardar_tiempos.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tiempos: datos })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        document.getElementById('mensajeGuardado').innerHTML = '<div class="alert alert-success">Tiempos guardados correctamente.</div>';
+                    } else {
+                        document.getElementById('mensajeGuardado').innerHTML = '<div class="alert alert-danger">Error al guardar los tiempos: ' + (res.error || '') + '</div>';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('mensajeGuardado').innerHTML = '<div class="alert alert-danger">Error de conexión al guardar los tiempos.</div>';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

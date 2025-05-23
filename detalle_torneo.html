@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Torneo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/detalle_torneo.css">
+</head>
+<body>
+    <!-- Fondo decorativo -->
+    <div class="background-gradient"></div>
+    <header class="site-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="header-left d-flex align-items-center">
+                <a href="index.html" class="brand-logo">
+                    <img src="./asset/img/imglogo/logo.png" alt="Logo" class="logo-img">
+                </a>
+                <span class="brand-text">Liga de Natación del Huila</span>
+            </div>
+            <button class="navbar-toggler d-md-none" type="button" aria-label="Menú" id="menuToggle">
+                <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+            </button>
+            <nav class="header-nav">
+                <ul class="nav-list d-flex">
+                    <li><a href="#" class="nav-link active" data-section="convocatoria"><i class="fas fa-file-alt"></i> Convocatoria</a></li>
+                    <li><a href="#" class="nav-link" data-section="inscripciones"><i class="fas fa-edit"></i> Inscripciones</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container content d-flex flex-column align-items-center">
+        <div class="main-card shadow-lg rounded-4 p-4 mb-4 bg-white animate-fade-in">
+            <div class="text-center mb-4">
+                <h2 id="nombreTorneo" class="text-center"></h2>
+            </div>
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+                <div class="text-center mb-3 mb-md-0">
+                    <img id="logoTorneo" src="" alt="Logo del Torneo" class="img-fluid torneo-logo-elevated">
+                </div>
+                <div class="text-center text-md-left ml-md-4 torneo-info-list">
+                    <p><i class="fas fa-calendar-alt text-success"></i> <strong>Fecha de Inicio:</strong> <span id="fechaInicio"></span></p>
+                    <p><i class="fas fa-hourglass-half text-success"></i> <strong>Duración:</strong> <span id="duracion"></span> días</p>
+                    <p><i class="fas fa-city text-success"></i> <strong>Ciudad:</strong> <span id="ciudad"></span></p>
+                    <p><i class="fas fa-swimmer text-success"></i> <strong>Piscina:</strong> <span id="piscina"></span></p>
+                    <p><i class="fas fa-map-marker-alt text-success"></i> <strong>Dirección:</strong> <span id="direccion"></span></p>
+                    <p><i class="fas fa-list text-success"></i> <strong>Pruebas Válidas:</strong> <span id="pruebasValidas"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="convocatoria" class="container-fluid section convocatoria-section shadow-sm rounded-4 bg-white animate-fade-in">
+        <h3><i class="fas fa-file-alt text-success"></i> Convocatoria</h3>
+        <div id="convocatoriaContent" class="content-box"></div>
+        <div class="convocatoria-pdf mt-3 text-center">
+            <a href="asset/pdf/XXII FESTI- TORNEO DE NATACIÓN CLUB ATLANTIC NEIVA 2025.pdf" target="_blank" class="btn btn-outline-success btn-lg px-4 py-2 convocatoria-btn">
+                <i class="fas fa-file-pdf"></i>
+                Ver Convocatoria en PDF
+            </a>
+        </div>
+    </div>
+    <div id="inscripciones" class="container-fluid section inscripciones-section shadow-sm rounded-4 bg-white animate-fade-in" style="display: none;">
+        <h3><i class="fas fa-edit text-success"></i> Inscripciones</h3>
+        <div id="inscripcionesContent" class="content-box">
+            <form id="formInscripcion">
+                <div class="form-group">
+                    <label for="categoriasTorneo">Selecciona las categorías en las que deseas participar:</label>
+                    <select id="categoriasTorneo" name="categorias[]" class="form-control" multiple required>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success btn-block mt-3">Inscribirme</button>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid mt-5 tiempos-section shadow-sm rounded-4 bg-white animate-fade-in">
+        <h3><i class="fas fa-clock text-success"></i> Tiempos Restantes</h3>
+        <div id="tiemposRestantes" class="content-box">
+            <p><i class="fas fa-door-closed text-danger"></i> <strong>Tiempo para cierre de inscripciones:</strong> <span id="tiempoCierreInscripciones"></span></p>
+            <p><i class="fas fa-flag-checkered text-primary"></i> <strong>Tiempo para inicio del torneo:</strong> <span id="tiempoInicioTorneo"></span></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const torneoId = params.get('id');
+            if (torneoId) {
+                fetch(`torneos.php?id=${torneoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            document.getElementById('nombreTorneo').textContent = data.nombre;
+                            document.getElementById('logoTorneo').src = 'uploads/' + data.logo;
+                            document.getElementById('fechaInicio').textContent = formatDateTime(data.fecha_inicio);
+                            document.getElementById('duracion').textContent = data.duracion;
+                            document.getElementById('ciudad').textContent = data.ciudad;
+                            document.getElementById('piscina').textContent = data.piscina;
+                            document.getElementById('direccion').textContent = data.direccion;
+                            const categoriasPruebas = JSON.parse(data.categorias_pruebas || '{}');
+                            let pruebasHtml = '';
+                            for (const [categoria, pruebas] of Object.entries(categoriasPruebas)) {
+                                pruebasHtml += `<strong>${categoria}:</strong> ${pruebas.join(', ')}<br>`;
+                            }
+                            document.getElementById('pruebasValidas').innerHTML = pruebasHtml || 'No hay pruebas válidas seleccionadas.';
+                            const fechaCierreInscripciones = new Date(data.fecha_cierre_inscripciones);
+                            const fechaInicioTorneo = new Date(data.fecha_inicio);
+                            function actualizarTiempos() {
+                                const ahora = new Date();
+                                const tiempoCierre = fechaCierreInscripciones - ahora;
+                                const tiempoInicio = fechaInicioTorneo - ahora;
+                                document.getElementById('tiempoCierreInscripciones').textContent = tiempoCierre > 0
+                                    ? formatTimeRemaining(tiempoCierre)
+                                    : 'Cerrado';
+                                document.getElementById('tiempoInicioTorneo').textContent = tiempoInicio > 0
+                                    ? formatTimeRemaining(tiempoInicio)
+                                    : 'Iniciado';
+                            }
+                            actualizarTiempos();
+                            setInterval(actualizarTiempos, 1000 * 60);
+                            const navLinks = document.querySelectorAll('.nav-link');
+                            const sections = document.querySelectorAll('.section');
+                            navLinks.forEach(link => {
+                                link.addEventListener('click', function (e) {
+                                    e.preventDefault();
+                                    navLinks.forEach(nav => nav.classList.remove('active'));
+                                    this.classList.add('active');
+                                    const sectionId = this.getAttribute('data-section');
+                                    sections.forEach(section => {
+                                        section.style.display = section.id === sectionId ? 'block' : 'none';
+                                    });
+                                    if (sectionId === 'inscripciones') {
+                                        cargarCategoriasInscripciones(data.categorias_pruebas);
+                                    }
+                                });
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                alert('ID del torneo no proporcionado');
+            }
+            function cargarCategoriasInscripciones(categoriasPruebasJson) {
+                try {
+                    const categoriasPruebas = JSON.parse(categoriasPruebasJson || '{}');
+                    const categoriasTorneo = document.getElementById('categoriasTorneo');
+                    fetch('verificar_sesion.php')
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (userData.logged_in && userData.fecha_nacimiento) {
+                                const edad = calcularEdad(userData.fecha_nacimiento);
+                                const categoriasPermitidas = determinarCategoriasPermitidas(edad);
+                                let categoriasHtml = '';
+                                for (const [categoria, pruebas] of Object.entries(categoriasPruebas)) {
+                                    if (categoriasPermitidas.includes(categoria)) {
+                                        categoriasHtml += `<optgroup label="${categoria}">`;
+                                        pruebas.forEach(prueba => {
+                                            categoriasHtml += `<option value="${categoria} - ${prueba}">${prueba}</option>`;
+                                        });
+                                        categoriasHtml += `</optgroup>`;
+                                    }
+                                }
+                                categoriasTorneo.innerHTML = categoriasHtml || '<option disabled>No hay categorías disponibles para tu edad.</option>';
+                            } else {
+                                categoriasTorneo.innerHTML = '<option disabled>Error al obtener la información del usuario.</option>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al verificar la sesión:', error);
+                            categoriasTorneo.innerHTML = '<option disabled>Error al cargar categorías.</option>';
+                        });
+                } catch (error) {
+                    console.error('Error al procesar las categorías:', error);
+                    categoriasTorneo.innerHTML = '<option disabled>Error al cargar categorías.</option>';
+                }
+            }
+            function calcularEdad(fechaNacimiento) {
+                const hoy = new Date();
+                const nacimiento = new Date(fechaNacimiento);
+                let edad = hoy.getFullYear() - nacimiento.getFullYear();
+                const mes = hoy.getMonth() - nacimiento.getMonth();
+                if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+                    edad--;
+                }
+                return edad;
+            }
+            function determinarCategoriasPermitidas(edad) {
+                if (edad >= 9 && edad <= 10) return ['Infantil A'];
+                if (edad >= 11 && edad <= 12) return ['Infantil B'];
+                if (edad >= 13 && edad <= 14) return ['Juvenil A'];
+                if (edad >= 15 && edad <= 16) return ['Juvenil B'];
+                if (edad >= 17) return ['Mayores'];
+                return [];
+            }
+            function formatDateTime(dateTime) {
+                const date = new Date(dateTime);
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                };
+                return date.toLocaleString('es-ES', options);
+            }
+            function formatTimeRemaining(milliseconds) {
+                const totalMinutes = Math.floor(milliseconds / (1000 * 60));
+                const days = Math.floor(totalMinutes / (60 * 24));
+                const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+                const minutes = totalMinutes % 60;
+                return `${days} días, ${hours} horas, ${minutes} minutos`;
+            }
+            const menuToggle = document.getElementById('menuToggle');
+            const headerNav = document.querySelector('.header-nav');
+            menuToggle.addEventListener('click', function () {
+                headerNav.classList.toggle('show-nav');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function () {
+                    if (window.innerWidth <= 768) {
+                        headerNav.classList.remove('show-nav');
+                    }
+                });
+            });
+            document.getElementById('formInscripcion').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const categoriasSeleccionadas = Array.from(document.getElementById('categoriasTorneo').selectedOptions).map(option => option.value);
+                if (categoriasSeleccionadas.length === 0) {
+                    alert('Por favor selecciona al menos una categoría.');
+                    return;
+                }
+                fetch('inscribir_torneo.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        torneo_id: torneoId,
+                        categorias: categoriasSeleccionadas
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Inscripción realizada exitosamente.');
+                    } else {
+                        alert(data.message || 'Error al realizar la inscripción.');
+                    }
+                })
+                .catch(error => console.error('Error al inscribirse:', error));
+            });
+        });
+    </script>
+</body>
+</html>

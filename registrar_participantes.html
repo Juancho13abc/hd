@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Participantes - Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="asset/css/admin.css">
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('verificar_admin.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.admin_logged_in) {
+                        window.location.href = 'admin_login.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'admin_login.html';
+                });
+        });
+    </script>
+    <div class="admin-sidebar">
+        <h2><i class="fas fa-user-shield"></i> Panel de Administración</h2>
+        <ul>
+            <li><a href="registrar_clubes.html"><i class="fas fa-swimmer"></i> Registrar Clubes</a></li>
+            <li><a href="registrar_participantes.html" class="active"><i class="fas fa-users"></i> Registrar Participantes</a></li>
+            <li><a href="inscripciones.html"><i class="fas fa-upload"></i> Subir Resultados</a></li>
+            <li><a href="prueba.html"><i class="fas fa-calendar-check"></i> Gestión de Torneos</a></li>
+        </ul>
+        <div style="margin-top:30px; text-align:center;">
+            <a href="logout_admin.php" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+        </div>
+    </div>
+
+    <div class="admin-content">
+        <header class="admin-header">
+            <h1>Registrar Participantes</h1>
+        </header>
+        <main class="container mt-4">
+            <div class="form-group">
+                <label for="select-club">Selecciona un Club</label>
+                <select id="select-club" class="form-control" onchange="loadParticipants()">
+                    <option value="">Cargando clubes...</option>
+                </select>
+            </div>
+
+            <div id="participants-section" class="d-none">
+                <h2 class="mt-4">Participantes</h2>
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Tipo de Documento</th>
+                            <th>Número de Documento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participants-list">
+                    </tbody>
+                </table>
+
+                <h3>Agregar Participante</h3>
+                <form id="add-participant-form" action="procesar_registro_participante.php" method="POST">
+                    <input type="hidden" id="selected-club" name="club">
+                    <div class="form-group">
+                        <label for="participant-name">Nombre</label>
+                        <input type="text" id="participant-name" name="nombre" class="form-control" placeholder="Ingresa el nombre del participante" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-lastname">Apellidos</label>
+                        <input type="text" id="participant-lastname" name="apellidos" class="form-control" placeholder="Ingresa los apellidos del participante" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-document-type">Tipo de Documento</label>
+                        <select id="participant-document-type" name="tipo_documento" class="form-control" required>
+                            <option value="">Selecciona el tipo de documento</option>
+                            <option value="cedula">Cédula</option>
+                            <option value="tarjeta_identidad">Tarjeta de Identidad</option>
+                            <option value="pasaporte">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="participant-document-number">Número de Documento</label>
+                        <input type="text" id="participant-document-number" name="numero_documento" class="form-control" placeholder="Ingresa el número de documento" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">Agregar Participante</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function loadParticipants() {
+            const selectClub = document.getElementById('select-club');
+            const club = selectClub.value;
+            const participantsSection = document.getElementById('participants-section');
+            const participantsList = document.getElementById('participants-list');
+            const selectedClubInput = document.getElementById('selected-club');
+
+            if (club) {
+                participantsSection.classList.remove('d-none');
+                selectedClubInput.value = club;
+
+                fetch(`obtener_participantes.php?club_id=${club}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        participantsList.innerHTML = data.map(participant => `
+                            <tr>
+                                <td>${participant.nombre}</td>
+                                <td>${participant.apellidos}</td>
+                                <td>${participant.tipo_documento}</td>
+                                <td>${participant.numero_documento}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteParticipant(${participant.id})">Eliminar</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar los participantes:', error);
+                        participantsList.innerHTML = '<tr><td colspan="5">Error al cargar participantes</td></tr>';
+                    });
+            } else {
+                participantsSection.classList.add('d-none');
+                participantsList.innerHTML = '';
+                selectedClubInput.value = '';
+            }
+        }
+
+        document.getElementById('select-club').addEventListener('change', loadParticipants);
+
+        function deleteParticipant(participantId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este participante?')) {
+                fetch(`eliminar_participante.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: participantId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message)
+                    } else {
+                        alert(data.message || 'Error al eliminar el participante.');
+                    }
+                })
+                .catch(error => console.error('Error al eliminar el participante:', error));
+            }
+        }
+
+        document.getElementById('add-participant-form').addEventListener('submit', function (e) {
+            e.preventDefault(); 
+
+            const formData = new FormData(this);
+            fetch('procesar_registro_participante.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageBox = document.createElement('div');
+                messageBox.className = `alert ${data.success ? 'alert-success' : 'alert-danger'}`;
+                messageBox.textContent = data.message;
+                this.prepend(messageBox);
+
+                if (data.success) {
+                    loadParticipants(); 
+                    this.reset(); 
+                }
+
+                setTimeout(() => messageBox.remove(), 5000); 
+            })
+            .catch(error => console.error('Error al registrar el participante:', error));
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('obtener_clubes.php')
+                .then(response => response.text())
+                .then(data => {
+                    const selectClub = document.getElementById('select-club');
+                    selectClub.innerHTML = '<option value="">Selecciona un club</option>' + data;
+                })
+                .catch(error => {
+                    console.error('Error al cargar los clubes:', error);
+                    document.getElementById('select-club').innerHTML = '<option value="">Error al cargar clubes</option>';
+                });
+        });
+    </script>
+</body>
+</html>
