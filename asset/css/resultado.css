@@ -1,0 +1,312 @@
+/* --- NAVBAR Y HEADER --- */
+.site-header {
+  background: rgba(255, 255, 255, 0.815);
+  padding: 15px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+.header-left .brand-logo img {
+  height: 50px;
+  margin-right: 10px;
+}
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #28a745;
+}
+.header-nav .nav-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  text-align: center;
+}
+.header-nav .nav-list li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.1rem;
+  transition: color 0.3s ease, background 0.3s ease;
+  padding: 10px 15px;
+  border-radius: 5px;
+  position: relative;
+}
+.header-nav .nav-list li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #28a745;
+  transition: width 0.3s ease;
+  -webkit-transition: width 0.3s ease;
+}
+.header-nav .nav-list li a:hover::after {
+  width: 100%;
+  left: 0;
+  background: #28a745;
+}
+.header-nav .nav-list li a:hover {
+  color: #28a745;
+}
+.header-social a {
+  color: #28a745;
+  margin-left: 15px;
+  transition: color 0.3s ease;
+}
+.header-social a:hover {
+  color: #1e7e34;
+}
+.login-icon {
+  margin-left: 20px;
+}
+.login-icon a {
+  color: green;
+  text-decoration: none;
+}
+.login-icon a:hover {
+  color: darkgreen;
+}
+
+/* --- MENÚ HAMBURGUESA --- */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  z-index: 1001;
+}
+.hamburger-menu span {
+  height: 3px;
+  width: 25px;
+  background: #333;
+  margin-bottom: 4px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+@media (max-width: 768px) {
+  .header-nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 999;
+  }
+  .header-nav.active {
+    display: flex;
+  }
+  .hamburger-menu {
+    display: flex;
+  }
+  .header-nav .nav-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-nav .nav-list li {
+    width: 100%;
+    text-align: center;
+  }
+  .header-nav .nav-list li a {
+    padding: 10px 0;
+    width: 100%;
+    display: block;
+  }
+  .header-social {
+    display: none !important;
+  }
+  .header-left {
+    justify-content: center;
+    width: 100%;
+  }
+  .brand-text {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* --- FOOTER --- */
+#footer {
+  background: #28a745;
+  color: #fff;
+  padding: 40px 0;
+  text-align: center;
+}
+.footer-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.footer-col {
+  padding: 10px;
+  min-width: 250px;
+}
+.footer-col h5 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+.footer-col p,
+.footer-col a {
+  font-size: 0.95rem;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1.6;
+}
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-col ul.social-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.footer-bottom {
+  text-align: center;
+}
+.footer-bottom hr {
+  border: 1px solid #fff;
+  width: 80%;
+  margin: 20px auto;
+}
+.footer-bottom p {
+  font-size: 0.9rem;
+}
+@media (min-width: 768px) {
+  .footer-row {
+    flex-direction: row;
+  }
+}
+
+/* --- HERO DE RESULTADOS --- */
+.resultados-hero {
+  background: #e3f0fc;
+  color: #15518a;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 4px 16px rgba(21,81,138,0.08);
+}
+.resultados-hero-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #15518a;
+}
+.resultados-hero-content p {
+  font-size: 1.1rem;
+  color: #2176bd;
+}
+
+/* --- FILTROS DE RESULTADOS --- */
+.resultados-form-group label {
+  color: #218838;
+  font-size: 1.05rem;
+  margin-bottom: 0.3rem;
+}
+.resultados-form-group .custom-select,
+.resultados-form-group select.form-control {
+  border-radius: 8px;
+  border: 1.5px solid #28a745;
+  background: #f8f9fa;
+  color: #333;
+  font-weight: 500;
+  transition: border-color 0.2s;
+}
+.resultados-form-group .custom-select:focus,
+.resultados-form-group select.form-control:focus {
+  border-color: #218838;
+  box-shadow: 0 0 0 2px #b6f5c6;
+}
+
+/* --- TABLA DE RESULTADOS --- */
+.resultados-table-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(40,167,69,0.08);
+  padding: 18px 12px 6px 12px;
+  margin-bottom: 40px;
+}
+.resultados-table-card table {
+  margin-bottom: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.resultados-table-card thead th {
+  background: #218838;
+  color: #fff;
+  border: none;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+}
+.resultados-table-card tbody tr {
+  transition: background 0.2s;
+}
+.resultados-table-card tbody tr:hover {
+  background: #eafaf0;
+}
+.resultados-table-card td, .resultados-table-card th {
+  vertical-align: middle;
+  text-align: center;
+}
+.resultados-table-card .img-thumbnail {
+  border-radius: 50%;
+  border: 2px solid #28a745;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  background: #f8f9fa;
+}
+.resultados-table-card .tiempo-container span {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.08rem;
+  color: #218838;
+  font-weight: 600;
+}
+.resultados-table-card .puesto {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+/* Responsive para filtros y tabla */
+@media (max-width: 767.98px) {
+  .resultados-hero-content h1 {
+    font-size: 1.5rem;
+  }
+  .resultados-hero-content p {
+    font-size: 0.95rem;
+  }
+  .resultados-table-card {
+    padding: 8px 2px 2px 2px;
+  }
+  .resultados-form-group label {
+    font-size: 0.98rem;
+  }
+}

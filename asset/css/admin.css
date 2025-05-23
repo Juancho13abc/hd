@@ -1,0 +1,201 @@
+body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Hacer el panel fijo */
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Permitir desplazamiento si el contenido es largo */
+}
+
+.admin-sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-sidebar ul li {
+    margin: 15px 0;
+}
+
+.admin-sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.admin-sidebar ul li a:hover,
+.admin-sidebar ul li a.active {
+    background-color: #495057;
+}
+
+.admin-sidebar ul li a {
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.admin-sidebar ul li a.active {
+    background: #28a745;
+    color: #fff;
+}
+
+.admin-sidebar ul li a i {
+    margin-right: 10px;
+}
+
+.admin-content {
+    margin-left: 250px; /* Ajustar el contenido principal para que no se superponga con el panel */
+    padding: 20px;
+    width: calc(100% - 250px); /* Asegurar que el contenido ocupe el espacio restante */
+}
+
+.admin-header {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 20px;
+}
+
+.admin-header h1,
+.admin-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #28a745;
+    color: #fff;
+    padding: 15px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.card-body {
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.card-body p {
+    margin: 0 0 10px;
+    font-size: 1rem;
+}
+
+.card-body ul {
+    padding-left: 20px;
+    margin: 0;
+    list-style-type: disc;
+}
+
+.card-body ul li {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.tiempo-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.tiempo-container input {
+    width: 60px;
+    text-align: center;
+}
+
+/* Estilos para inscripciones.html */
+.inscripciones-header {
+    background: linear-gradient(90deg, #28a745 0%, #43e97b 100%);
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(40,167,69,0.10);
+    padding: 30px 0 20px 0;
+    margin-bottom: 30px;
+}
+.inscripciones-form-group {
+    background: #f6fff8;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    border-left: 5px solid #28a745;
+    padding: 20px 25px 10px 25px;
+    margin-bottom: 25px;
+}
+.inscripciones-table-container {
+    background: #f6fff8;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    border-left: 5px solid #28a745;
+    padding: 20px 10px 10px 10px;
+    margin-bottom: 25px;
+}
+.table thead th {
+    background: #28a745;
+    color: #fff;
+    border: none;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #eafaf1;
+}
+.btn-success {
+    font-size: 1.1rem;
+    padding: 10px 30px;
+    border-radius: 25px;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    background: linear-gradient(90deg, #28a745 0%, #43e97b 100%);
+    border: none;
+}
+.btn-success:hover, .btn-success:focus {
+    background: linear-gradient(90deg, #218838 0%, #34d058 100%);
+}
+#mensajeGuardado {
+    font-size: 1rem;
+}
+@media (max-width: 768px) {
+    .inscripciones-header {
+        padding: 20px 0 10px 0;
+        font-size: 1.2rem;
+    }
+    .inscripciones-form-group, .inscripciones-table-container {
+        padding: 10px 5px 5px 5px;
+    }
+}
